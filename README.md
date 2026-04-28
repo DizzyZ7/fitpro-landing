@@ -19,7 +19,7 @@
 
 ## ✨ About The Project
 
-[![Product Screen Shot][product-screenshot]](https://your-username.github.io/fitpro-landing)
+[![Product Screen Shot][product-screenshot]](https://DizzyZ7.github.io/fitpro-landing)
 
 **FitPro** is a production‑ready React single‑page website designed to be sold to fitness professionals.  
 It ditches generic gym clichés and embraces a **dark editorial aesthetic** — think Nike meets high‑end magazine.
