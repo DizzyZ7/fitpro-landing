@@ -134,11 +134,19 @@
       inset: 0;
       background: linear-gradient(180deg, transparent 0%, rgba(200,255,0,.03) 50%, transparent 100%);
       animation: shimmer 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
     }
 
     @keyframes shimmer {
       0%, 100% { opacity: .3; }
       50% { opacity: .7; }
+    }
+
+    .photo-frame {
+      background:
+        radial-gradient(circle at 50% 20%, rgba(200,255,0,0.10), transparent 35%),
+        linear-gradient(135deg, #101010 0%, #1a1a1a 45%, #050505 100%);
     }
 
     .profile-photo {
@@ -152,12 +160,6 @@
       z-index: 2;
     }
 
-    .photo-frame {
-      background:
-        radial-gradient(circle at 50% 20%, rgba(200,255,0,0.10), transparent 35%),
-        linear-gradient(135deg, #101010 0%, #1a1a1a 45%, #050505 100%);
-    }
-
     .photo-frame .photo-label {
       display: none;
     }
@@ -165,12 +167,6 @@
     .photo-frame img[src=""],
     .photo-frame img:not([src]) {
       display: none;
-    }
-
-    @media (max-width: 768px) {
-      .profile-photo {
-        padding: 10px;
-      }
     }
 
     a:focus-visible,
@@ -182,6 +178,10 @@
     }
 
     @media (max-width: 768px) {
+      .profile-photo {
+        padding: 10px;
+      }
+
       .testimonials-scroll {
         display: flex;
         overflow-x: auto;
@@ -211,19 +211,7 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
 
-    /*
-      ВАЖНО:
-      GitHub Pages сам по себе не отправляет формы на почту/в Telegram, потому что это статический хостинг.
-      Для отправки на почту можно подключить FormSubmit:
-      1) вписать свою почту в CONTACT_EMAIL ниже;
-      2) оставить FORM_MODE = 'formsubmit';
-      3) после первой отправки подтвердить почту через письмо от FormSubmit.
-
-      Для Telegram нужен backend / serverless / bot. В этом файле стоит безопасный вариант:
-      форма открывает Telegram с подготовленным сообщением.
-    */
-
-    const CONTACT_EMAIL = 'dizzyod.z7@gmail.com'; // ← сюда вставь свою почту
+    const CONTACT_EMAIL = 'dizzyod.z7@gmail.com';
     const TELEGRAM_USERNAME = 'dizzypupa';
     const PHONE = '+79995212881';
     const GITHUB_URL = 'https://github.com/DizzyZ7';
@@ -282,9 +270,6 @@
           role: 'Frontend / Web Developer',
           text: 'Я делаю аккуратные лендинги, портфолио-проекты и веб-сервисы, которые можно быстро разместить на GitHub Pages, Vercel или другом хостинге. Этот проект — пример премиального фитнес-лендинга с адаптивом и мультиязычностью.',
           location: 'Санкт-Петербург',
-          github: 'GitHub: DizzyZ7',
-          phone: 'Телефон: +7 999 521-28-81',
-          telegram: 'Telegram: @dizzypupa',
           email: 'Email: dizzyod.z7@gmail.com',
           photo: 'DCBEBAEF-272C-44FE-B4A3-666200A6F5EB.png'
         },
@@ -386,9 +371,6 @@
           role: 'Frontend / Web Developer',
           text: 'I build clean landing pages, portfolio projects, and web services that can be quickly deployed to GitHub Pages, Vercel, or other hosting platforms. This project is an example of a premium fitness landing page with responsive layout and bilingual content.',
           location: 'Saint Petersburg',
-          github: 'GitHub: DizzyZ7',
-          phone: 'Phone: +7 999 521-28-81',
-          telegram: 'Telegram: @dizzypupa',
           email: 'Email: dizzyod.z7@gmail.com',
           photo: 'DCBEBAEF-272C-44FE-B4A3-666200A6F5EB.png'
         },
@@ -520,6 +502,30 @@
         <section id={id} ref={ref} className={`fade-in-section ${isInView ? 'is-visible' : ''} ${className}`}>
           {children}
         </section>
+      );
+    };
+
+    const SmartImage = ({ src, alt, label, className = '' }) => {
+      const [loaded, setLoaded] = useState(false);
+      const [error, setError] = useState(false);
+
+      return (
+        <>
+          <img
+            src={src}
+            alt={alt}
+            className={`profile-photo ${className}`}
+            style={{ display: error ? 'none' : 'block' }}
+            onLoad={() => setLoaded(true)}
+            onError={() => setError(true)}
+          />
+
+          {(!loaded || error) && (
+            <span className="photo-label text-[#6B6B6B] text-sm uppercase tracking-widest font-body absolute z-[3]">
+              {label}
+            </span>
+          )}
+        </>
       );
     };
 
@@ -748,24 +754,15 @@
           </div>
 
           <div className="placeholder-img photo-frame rounded-lg h-[350px] sm:h-[450px] md:h-[500px] w-full border border-[#2A2A2A] flex items-center justify-center">
-            <img
+            <SmartImage
               src="assets/4A58DA4E-5B78-483A-B54A-D17F7B064CED.png"
               alt={t.about.photo}
-              className="profile-photo"
-              onLoad={(e) => {
-                const label = e.currentTarget.parentElement.querySelector('.photo-label');
-                if (label) label.style.display = 'none'
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const label = e.currentTarget.parentElement.querySelector('.photo-label');
-                if (label) label.style.display = 'block';
-              }}
+              label={t.about.photo}
             />
-            <span className="photo-label text-[#6B6B6B] text-sm uppercase tracking-widest font-body absolute">
-              {t.about.photo}
-            </span>
           </div>
+        </div>
+      </FadeInSection>
+    );
 
     const ProgramsSection = ({ t }) => (
       <FadeInSection id="programs" className="py-20 md:py-28 px-4 max-w-7xl mx-auto">
@@ -796,23 +793,11 @@
       <FadeInSection id="developer" className="py-20 md:py-28 px-4 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center bg-[#141414] border border-[#2A2A2A] rounded-2xl overflow-hidden">
           <div className="placeholder-img photo-frame h-[420px] lg:h-full min-h-[420px] flex items-center justify-center">
-            <img
+            <SmartImage
               src="assets/DCBEBAEF-272C-44FE-B4A3-666200A6F5EB.png"
               alt={t.developer.name}
-              className="profile-photo"
-              onLoad={(e) => {
-                const label = e.currentTarget.parentElement.querySelector('.photo-label');
-                if (label) label.style.display = 'none';
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const label = e.currentTarget.parentElement.querySelector('.photo-label');
-                if (label) label.style.display = 'block';
-              }}
+              label="DZ"
             />
-            <span className="photo-label font-display text-6xl text-[#6B6B6B]/40 tracking-widest absolute">
-              DZ
-            </span>
           </div>
 
           <div className="p-8 md:p-12">
@@ -987,9 +972,8 @@
           `Сообщение: ${formData.message}`
         ].join('\n');
 
-        if (FORM_MODE === 'formsubmit' && CONTACT_EMAIL !== 'your-email@example.com') {
-          const form = e.currentTarget;
-          form.submit();
+        if (FORM_MODE === 'formsubmit' && CONTACT_EMAIL) {
+          e.currentTarget.submit();
           return;
         }
 
@@ -1002,7 +986,7 @@
         }, 1200);
       };
 
-      const formAction = CONTACT_EMAIL !== 'dizzyod.z7@gmail.com'
+      const formAction = CONTACT_EMAIL
         ? `https://formsubmit.co/${CONTACT_EMAIL}`
         : '';
 
@@ -1079,7 +1063,7 @@
                 </button>
 
                 <p className="text-xs text-[#6B6B6B] leading-relaxed">
-                  GitHub Pages — статический хостинг. Сейчас форма открывает Telegram с готовым текстом. Чтобы отправлять на почту, впиши свою почту в CONTACT_EMAIL и поставь FORM_MODE = 'formsubmit'.
+                  GitHub Pages — статический хостинг. Сейчас форма открывает Telegram с готовым текстом. Для отправки на почту поставь FORM_MODE = 'formsubmit' и подтверди почту через FormSubmit.
                 </p>
               </form>
             </div>
@@ -1163,7 +1147,7 @@
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<FitProApp />);
 
-    console.log('%c🏋️ FitPro Ready — RU/EN + Developer Contacts', 'font-size: 18px; color: #C8FF00; font-weight: bold;');
+    console.log('%c🏋️ FitPro Ready — fixed full version', 'font-size: 18px; color: #C8FF00; font-weight: bold;');
   </script>
 </body>
 </html>
