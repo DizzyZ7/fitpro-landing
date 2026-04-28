@@ -795,9 +795,24 @@
     const DeveloperSection = ({ t }) => (
       <FadeInSection id="developer" className="py-20 md:py-28 px-4 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center bg-[#141414] border border-[#2A2A2A] rounded-2xl overflow-hidden">
-          <div className="placeholder-img h-[420px] lg:h-full min-h-[420px] flex items-center justify-center">
-            <img src="assets/DCBEBAEF-272C-44FE-B4A3-666200A6F5EB.png" alt={t.developer.name} className="profile-photo" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-            <span className="font-display text-6xl text-[#6B6B6B]/40 tracking-widest absolute">DZ</span>
+          <div className="placeholder-img photo-frame h-[420px] lg:h-full min-h-[420px] flex items-center justify-center">
+            <img
+              src="assets/DCBEBAEF-272C-44FE-B4A3-666200A6F5EB.png"
+              alt={t.developer.name}
+              className="profile-photo"
+              onLoad={(e) => {
+                const label = e.currentTarget.parentElement.querySelector('.photo-label');
+                if (label) label.style.display = 'none';
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                const label = e.currentTarget.parentElement.querySelector('.photo-label');
+                if (label) label.style.display = 'block';
+              }}
+            />
+            <span className="photo-label font-display text-6xl text-[#6B6B6B]/40 tracking-widest absolute">
+              DZ
+            </span>
           </div>
 
           <div className="p-8 md:p-12">
