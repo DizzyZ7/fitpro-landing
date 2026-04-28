@@ -7,9 +7,9 @@
   <p align="center">
     Dark luxury landing page for gym owners, personal trainers & fitness studios.
     <br />
-    <a href="https://your-username.github.io/fitpro-landing"><strong>🔗 Live Demo »</strong></a>
+    <a href="https://DizzyZ7.github.io/fitpro-landing"><strong>🔗 Live Demo »</strong></a>
     ·
-    <a href="https://github.com/your-username/fitpro-landing/issues">🐞 Report Bug</a>
+    <a href="https://github.com/DizzyZ7/fitpro-landing/issues">🐞 Report Bug</a>
     ·
     <a href="#contact">📩 Contact</a>
   </p>
